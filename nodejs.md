@@ -464,3 +464,92 @@ module.exports = {
 };
 ```
 npm start就完成了rest api的编写。
+
+# 10, 编写websocket程序。首先创建package.json。
+```
+{
+    "name": "hello-koa2",
+    "version": "1.0.0",
+    "description": "Hello Koa 2 example with async",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "keywords": [
+        "koa",
+        "async"
+    ],
+    "author": "Zuo Yuan",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "koa": "2.0.0",
+        "koa-route": "^3.2.0",
+        "koa-static": "4.0.2",
+        "ws": "1.1.1"
+    }
+}
+```
+然后运行npm install，安装相关依赖。
+编写app.js
+```
+// 导入WebSocket模块:
+const serve = require('koa-static');
+const WebSocket = require('ws');
+const Koa = require('koa');
+
+// 引用Server类:
+const WebSocketServer = WebSocket.Server;
+const app = new Koa();
+app.use(serve('.'));
+// 实例化:
+let server = app.listen(3000);
+const wss = new WebSocketServer({
+    server: server
+});
+
+wss.on('connection', function (ws) {
+    console.log(`[SERVER] connection()`);
+    console.log('ws: ', ws)
+    let username = ws.upgradeReq.headers.host
+    ws.on('message', function (message) {
+        console.log(`[SERVER] Received: ${message}`);
+        ws.send(`${username} 说: ${message}`, (err) => {
+            if (err) {
+                console.log(`[SERVER] error: ${err}`);
+            }
+        });
+    })
+});
+
+console.log('ws server started at port 3000...');
+```
+编写index.html，和app.js同级目录。
+```
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>聊天室</title>
+</head>
+<body>
+    <div id="contents" style="height:500px;overflow:auto;"></div>
+    <div>
+        <textarea id="msg"></textarea>
+        <a href="javascript:;" onclick="sendMsg()">发送</a>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script type="text/javascript">
+        let ws = new WebSocket("ws://localhost:3000/test/1");
+        ws.onmessage = function(e) {
+            $("#contents").append("<p>" + e.data + "</p>");
+        }
+        function sendMsg() {
+            var msg = $("#msg").val();
+            ws.send(msg);
+            $("#msg").val("");
+        }
+    </script>
+</body>
+</html>
+```
+这样一个最简单的聊天室就完成了。
