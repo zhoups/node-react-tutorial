@@ -24,7 +24,7 @@ app.listen(3000);
 console.log('app started at port 3000...');
 ```
 
-# 2, 创建package.js完成包管理，在hello-koa文件夹中创建此文件。
+# 2, 创建package.json完成包管理，在hello-koa文件夹中创建此文件。
 ```
 // package.json
 {
