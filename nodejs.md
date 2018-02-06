@@ -278,7 +278,11 @@ let Pet = sequelize.define('pet', {
 如果要更新数据，可以对查询到的实例调用save()方法：
 ```
 (async () => {
-    var p = await queryFromSomewhere();
+    var p = await Pet.find({
+        where: {
+            name: 'Odie'
+        }
+    });
     p.gender = true;
     p.updatedAt = Date.now();
     p.version ++;
@@ -288,7 +292,11 @@ let Pet = sequelize.define('pet', {
 如果要删除数据，可以对查询到的实例调用destroy()方法：
 ```
 (async () => {
-    var p = await queryFromSomewhere();
+    var p = await Pet.find({
+        where: {
+            name: 'Odie'
+        }
+    });
     await p.destroy();
 })();
 ```
